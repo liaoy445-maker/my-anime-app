@@ -5,10 +5,31 @@ import os
 # 設定網頁標題與分頁圖標
 st.set_page_config(page_title="🌸 我的動漫手帳 🌸", layout="centered")
 
-# 💖 終極魔法：強行注入粉嫩粉嫩的櫻花主題樣式 💖
+# 💖 魔法咒語：強行注入乾淨粉嫩的草莓歐蕾主題 (已修正亂碼!)💖
 st.markdown(
     """
     <style>
+    /* 1. 【除塵術】把原本左上角那些難看的原生開關文字通通隱藏！ */
+    button.stSidebarCollapse {
+        display: none !important;
+    }
+
+    /* 2. 把側邊欄的黑膠條徹底消滅，換成可愛的櫻花滑動按鈕！ */
+    [data-testid="stSidebar"] div[class^="css"] {
+        top: -100px !important;
+    }
+    
+    /* 3. 【除塵術】強行把所有卡片裡那些噁心的文字碎片通通擦掉！ */
+    .stExpander div[data-testid="stMarkdownContainer"] p {
+        background-color: transparent !important;
+        background-image: none !important;
+        margin-left: 10px !important; /* 加個小空白，更可愛! */
+    }
+    .stExpander span {
+        color: inherit !important;
+    }
+
+    /* --- 原有的可愛配色 (繼續保留!) --- */
     /* 整個網頁的超級大背景 */
     .stApp {
         background-color: #FFF0F2 !important;
@@ -16,9 +37,10 @@ st.markdown(
     /* 側邊欄的粉嫩底色 */
     [data-testid="stSidebar"] {
         background-color: #FFE3E7 !important;
+        margin-top: -50px !important; /* 向上移動一点,把髒東西擋住 */
     }
-    /* 所有大大小小的文字通通變成溫柔的深棕色 */
-    h1, h2, h3, p, label, .stMarkdown, span {
+    /* 所有文字通通變成溫柔的深棕色 */
+    h1, h2, h3, p, label, .stMarkdown, span, .css-1dp5vir {
         color: #5D4037 !important;
         font-family: "Helvetica Neue", Arial, "Noto Sans TC", sans-serif !important;
     }
@@ -108,7 +130,7 @@ if mode == "➕ 填寫新紀錄 (捕捉感動)":
                 quotes_box, anime_review, anime_score
             ])
             save_data()
-            st.success(f" 🌟 嗶嗶！【{anime_name}】已經成功被小精靈收進手帳本本囉！(•̀ᴗ•́)و ̑̑")
+            st.success(f" 🌟 嗶嗶！【{anime_name}】已經成功被小精靈收進手帳本本囉！(•̀ᴗ•́)u")
         else:
             st.error("❌ 哇哇！主人忘記填寫「作品名稱」了啦，小精靈沒辦法存檔 Q_Q")
 
@@ -132,6 +154,7 @@ elif mode == "🌸 打開手帳本本 (翻閱/搜尋)":
                 found_any = True
                 stars = "⭐" * anime[6]
                 
+                # 💖 這格的程式碼做了大除塵！那些卡片上的文字碎片通通變不見！
                 with st.expander(f"🎬 {anime[0]} （{anime[1]} · {stars}）"):
                     st.write(f"**✍️ 創作者：** {anime[2]} | **🏷️ 作品標籤：** {anime[3]}")
                     st.write(f"**💌 心得點滴：** {anime[5] if anime[5] else '（目前空空如也，等待主人填寫中...）'}")
