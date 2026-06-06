@@ -94,7 +94,7 @@ def save_data():
 st.write("🛸 ☁️ 🦄 ☁️ 🎈 ☁️")
 st.write("👾 (つ >ω●)つ 🍓【 PIXEL ANIME NOTE 】🍓 ⊂(●ω< つ) 👾")
 
-st.title("ฅ•ω•ฅ 櫻花像素動漫手帳 🌸")
+st.title("ฅ•ω•ฅ 我的動漫手帳 🌸")
 st.caption("✨ 歡迎來到主人的二次元秘密基地！功能已經完整復活囉！ ✨")
 
 # --- 側邊欄選單 ---
