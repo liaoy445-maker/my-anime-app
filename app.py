@@ -3,60 +3,77 @@ import json
 import os
 
 # 設定網頁標題與分頁圖標
-st.set_page_config(page_title="🌸 我的動漫手帳 🌸", layout="centered")
+st.set_page_config(page_title="👾 我的像素動漫手帳 👾", layout="centered")
 
-# 💖 魔法咒語：強行注入乾淨粉嫩的草莓歐蕾主題 (已修正亂碼!)💖
+# 💖 究極像素魔法：強行將全網頁重構成 8-Bit 像素復古可愛風 💖
 st.markdown(
     """
     <style>
-    /* 1. 【除塵術】把原本左上角那些難看的原生開關文字通通隱藏！ */
-    button.stSidebarCollapse {
-        display: none !important;
-    }
-
-    /* 2. 把側邊欄的黑膠條徹底消滅，換成可愛的櫻花滑動按鈕！ */
-    [data-testid="stSidebar"] div[class^="css"] {
-        top: -100px !important;
-    }
+    /* 引入超可愛的日系像素風英文字體與中文字體風格 */
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
     
-    /* 3. 【除塵術】強行把所有卡片裡那些噁心的文字碎片通通擦掉！ */
-    .stExpander div[data-testid="stMarkdownContainer"] p {
-        background-color: transparent !important;
-        background-image: none !important;
-        margin-left: 10px !important; /* 加個小空白，更可愛! */
-    }
-    .stExpander span {
-        color: inherit !important;
-    }
-
-    /* --- 原有的可愛配色 (繼續保留!) --- */
-    /* 整個網頁的超級大背景 */
+    /* 1. 全域背景：改成軟綿綿的像素草莓牛奶色，並加上微微的復古點陣感 */
     .stApp {
         background-color: #FFF0F2 !important;
+        background-image: radial-gradient(#FFD1D9 1px, transparent 0px) !important;
+        background-size: 16px 16px !important;
     }
-    /* 側邊欄的粉嫩底色 */
+
+    /* 2. 側邊欄：變成復古遊戲機側條 */
     [data-testid="stSidebar"] {
         background-color: #FFE3E7 !important;
-        margin-top: -50px !important; /* 向上移動一点,把髒東西擋住 */
+        border-right: 4px solid #5D4037 !important;
     }
-    /* 所有文字通通變成溫柔的深棕色 */
-    h1, h2, h3, p, label, .stMarkdown, span, .css-1dp5vir {
+
+    /* 3. 消滅所有現代感！把所有大標題、文字全部改成棕色復古字體，並自帶像素陰影 */
+    h1, h2, h3, p, label, .stMarkdown, span {
         color: #5D4037 !important;
-        font-family: "Helvetica Neue", Arial, "Noto Sans TC", sans-serif !important;
+        font-family: 'VT323', "Courier New", "Noto Sans TC", sans-serif !important;
+        text-shadow: 1px 1px 0px #FFFFFF !important;
     }
-    /* 輸入框的可愛邊框與底色 */
+    
+    h1 {
+        font-size: 2.5rem !important;
+        letter-spacing: 2px !important;
+    }
+
+    /* 4. 【核心重置】讓所有卡片（Expander）變成超經典的 NES 遊戲機雙層像素邊框 */
+    .stExpander {
+        background-color: #FFFFFF !important;
+        border: 4px solid #5D4037 !important;
+        box-shadow: 5px 5px 0px #FFC1CC !important;
+        border-radius: 0px !important; /* 像素風必須是方方正正的！ */
+        margin-bottom: 15px !important;
+    }
+
+    /* 5. 輸入框與下拉選單：也全部變成方頭方腦的像素框 */
     .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {
         background-color: #FFFFFF !important;
         color: #5D4037 !important;
-        border: 2px solid #FFC1CC !important;
-        border-radius: 10px !important;
+        border: 4px solid #5D4037 !important;
+        border-radius: 0px !important;
+        box-shadow: 3px 3px 0px #FFE3E7 !important;
+        font-family: "Noto Sans TC", sans-serif !important;
     }
-    /* 讓展開卡片也變得白白嫩嫩 */
-    .stExpander {
-        background-color: #FFFFFF !important;
-        border: 2px solid #FFE3E7 !important;
-        border-radius: 12px !important;
-        box-shadow: 0px 4px 10px rgba(255, 193, 204, 0.2) !important;
+    
+    /* 6. 可愛按鈕：變成一按就會扁下去的 8-bit 遊戲按鈕 */
+    button[data-testid="baseButton-primary"], button[data-testid="baseButton-secondary"] {
+        background-color: #FF8A9A !important;
+        color: white !important;
+        border: 4px solid #5D4037 !important;
+        border-radius: 0px !important;
+        box-shadow: 4px 4px 0px #5D4037 !important;
+        font-weight: bold !important;
+        transition: all 0.1s ease !important;
+    }
+    button[data-testid="baseButton-primary"]:active, button[data-testid="baseButton-secondary"]:active {
+        transform: translate(4px, 4px) !important;
+        box-shadow: 0px 0px 0px !important;
+    }
+
+    /* 7. 隱藏醜醜的原生開關 */
+    button.stSidebarCollapse {
+        display: none !important;
     }
     </style>
     """,
@@ -81,129 +98,68 @@ def save_data():
     with open(FILE_NAME, "w", encoding="utf-8") as f:
         json.dump(anime_list, f, ensure_ascii=False, indent=4)
 
-# --- 💖 網頁畫面內容 💖 ---
-st.title("ฅ•ω•ฅ 櫻花飄飄動漫記錄手帳 🌸")
-st.caption("歡迎來到主人的追番秘密基地！在這裡記錄下每一份熱血、眼淚與心動吧 💖✨")
+# --- 💖 網頁畫面頂端：置入可愛的像素動漫裝飾橫條 💖 ---
+# 這裡使用了極具復古風的像素 GIF 角色與裝飾
+st.markdown(
+    """
+    <div style="text-align: center; margin-bottom: 10px;">
+        <img src="https://giffiles.alphacoders.com/214/214695.gif" width="120" style="image-rendering: pixelated; margin: 0 10px;">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbms3cXN4M29wZndpZXF0bWxoM29tZG15YTN3Z3R3Z3d6Znd0YWhubCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/8m4R9K71F_HcA/giphy.gif" width="100" style="image-rendering: pixelated;">
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+
+st.title("📟 🎮 PIXEL ANIME NOTE 👾 🌟")
+st.caption("✨ 歡迎光臨主人的 8-Bit 像素二次元秘密終端機！嗶嗶嗶—— ✨")
+
+# --- 側邊欄裝飾：加入像素風動漫娘頭像與裝飾 ---
+st.sidebar.markdown(
+    """
+    <div style="text-align: center; margin-bottom: 15px;">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXN6OHg4Zm10d3E4MXd0c3Z0ZzNqdzh0ZXN0OHp1Ynd5N3I0ZmsyOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/v98d89OUpIasPZ8Wv9/giphy.gif" width="130" style="image-rendering: pixelated; border: 3px solid #5D4037;"><br>
+        <span style="font-size: 14px; font-weight: bold; color: #5D4037;">SELECT MODE</span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # 左側導覽選單
 mode = st.sidebar.radio(
-    "🎀 祕密基地傳送門",
+    "💬 MENU",
     [
-        "🌸 打開手帳本本 (翻閱/搜尋)", 
-        "➕ 填寫新紀錄 (捕捉感動)", 
-        "📝 悄悄修改資料 (補上心情)", 
-        "🗑️ 揮揮手道別 (刪除紀錄)"
+        "💾 [LOAD] 打開手帳本本", 
+        "➕ [SAVE] 填寫新紀錄", 
+        "📝 [EDIT] 悄悄修改資料", 
+        "🗑️ [DROP] 揮揮手道別"
     ]
 )
 
+st.sidebar.markdown(
+    """
+    <div style="text-align: center; margin-top: 30px;">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM290YjRna3g3Mzhic3drY3Z0NjRwbTVmczdwbmM3a2x3cTFtc2d3cCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Lw97nLbeUym4e6hSFA/giphy.gif" width="60" style="image-rendering: pixelated;">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # 功能 1：填寫新紀錄
-if mode == "➕ 填寫新紀錄 (捕捉感動)":
-    st.header("✨ 填寫新紀錄")
-    st.subheader("把今天看番的感動通通鎖進手帳裡吧 📒💞")
+if mode == "➕ [SAVE] 填寫新紀錄":
+    st.header("🔮 ➕ INSERT NEW DATA")
     
     col1, col2 = st.columns(2)
     with col1:
-        anime_name = st.text_input("🍒 作品名稱", placeholder="例如：約會大作戰")
-        anime_author = st.text_input("✍️ 厲害的作者", placeholder="例如：橘公司老師")
+        anime_name = st.text_input("📝 TITLE / 作品名稱", placeholder="例如：約會大作戰")
+        anime_author = st.text_input("✍️ AUTHOR / 創作者", placeholder="例如：橘公司")
     with col2:
-        anime_status = st.selectbox("🎯 目前進度", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
-        anime_type = st.text_input("🏷️ 類型標籤", placeholder="例如：純愛、戰鬥、後宮番")
+        anime_status = st.selectbox("🎯 STATUS / 目前進度", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
+        anime_type = st.text_input("🏷️ TAGS / 類型標籤", placeholder="例如：純愛、戰鬥")
         
-    anime_review = st.text_area("📝 心得悄悄話", placeholder="偷偷寫下你對這部作品的滿滿想法...")
-    anime_score = st.slider("⭐ 萌度/推薦指數大評分", 1, 5, 5)
+    anime_review = st.text_area("💌 COMMENT / 心得悄悄話", placeholder="偷偷寫下你對這部作品的滿滿想法...")
+    anime_score = st.slider("⭐ SCORE / 推薦大評分", 1, 5, 5)
     
-    st.subheader("💬 本作神台詞（最多可以寫三句喔！）")
-    q1 = st.text_input("🌈 第一句神台詞", placeholder="震撼心靈的名台詞 1")
-    q2 = st.text_input("✨ 第二句神台詞", placeholder="名台詞 2")
-    q3 = st.text_input("🌸 第三句神台詞", placeholder="名台詞 3")
-    
-    st.write("")
-    if st.button("💝 點我！一鍵傳送入手帳本本", type="primary"):
-        if anime_name:
-            quotes_box = []
-            for q in [q1, q2, q3]:
-                if q.strip():
-                    quotes_box.append(q.strip())
-                    
-            anime_list.append([
-                anime_name, anime_status, anime_author, anime_type,
-                quotes_box, anime_review, anime_score
-            ])
-            save_data()
-            st.success(f" 🌟 嗶嗶！【{anime_name}】已經成功被小精靈收進手帳本本囉！(•̀ᴗ•́)u")
-        else:
-            st.error("❌ 哇哇！主人忘記填寫「作品名稱」了啦，小精靈沒辦法存檔 Q_Q")
-
-# 功能 2：查看與模糊查找
-elif mode == "🌸 打開手帳本本 (翻閱/搜尋)":
-    st.header("🔍 翻閱我的動漫手帳庫")
-    
-    search_keyword = st.text_input("🔮 全宇宙模糊大搜尋：", placeholder="搜尋名稱、標籤、神台詞或心得...")
-    
-    if anime_list:
-        found_any = False
-        for anime in anime_list:
-            all_quotes_text = "".join(anime[4])
-            
-            if not search_keyword or (
-                search_keyword in anime[0] or search_keyword in anime[1] or
-                search_keyword in anime[2] or search_keyword in anime[3] or
-                search_keyword in all_quotes_text or search_keyword in anime[5] or
-                str(anime[6]) in search_keyword
-            ):
-                found_any = True
-                stars = "⭐" * anime[6]
-                
-                # 💖 這格的程式碼做了大除塵！那些卡片上的文字碎片通通變不見！
-                with st.expander(f"🎬 {anime[0]} （{anime[1]} · {stars}）"):
-                    st.write(f"**✍️ 創作者：** {anime[2]} | **🏷️ 作品標籤：** {anime[3]}")
-                    st.write(f"**💌 心得點滴：** {anime[5] if anime[5] else '（目前空空如也，等待主人填寫中...）'}")
-                    if anime[4]:
-                        st.write("**💖 命中注定的神台詞：**")
-                        for q in anime[4]:
-                            st.info(f"✨ 「 {q} 」")
-        if not found_any:
-            st.warning(f"🥺 咦？雷達找不到符合【{search_keyword}】的動漫紀錄耶...")
-    else:
-        st.info("🎈 手帳本本目前空空的耶！快點左邊選單的「➕ 填寫新紀錄」來填滿它吧～")
-
-# 功能 3：修改動漫
-elif mode == "📝 悄悄修改資料 (補上心情)":
-    st.header("📝 悄悄修改資料")
-    if anime_list:
-        anime_names = [anime[0] for anime in anime_list]
-        selected_name = st.selectbox("請選擇哪一部作品想翻修呢：", anime_names)
-        
-        for anime in anime_list:
-            if anime[0] == selected_name:
-                st.write(f"正在為【{selected_name}】重新裝飾中：")
-                new_status = st.selectbox("新的追番狀態", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"], index=["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"].index(anime[1]) if anime[1] in ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"] else 0)
-                new_review = st.text_area("更新心得點滴", value=anime[5])
-                
-                if st.button("💝 敲定！儲存新心情"):
-                    anime[1] = new_status
-                    anime[5] = new_review
-                    save_data()
-                    st.success("✨ 耶！手帳更新成功，小精靈已經重新貼上漂亮的貼紙了！")
-                    st.rerun()
-    else:
-        st.info("🥺 目前沒有資料可以修改唷。")
-
-# 功能 4：刪除動漫
-elif mode == "🗑️ 揮揮手道別 (刪除紀錄)":
-    st.header("🗑️ 揮揮手道別")
-    if anime_list:
-        anime_names = [anime[0] for anime in anime_list]
-        target_name = st.selectbox("選一個要揮揮手說再見的作品：", anime_names)
-        
-        st.warning(f"⚠️ 哇！真的要讓【{target_name}】消失在手帳本本裡嗎？消失了就找不回來囉！")
-        if st.button("💥 沒關係，確定斷捨離！", type="primary"):
-            for anime in anime_list:
-                if anime[0] == target_name:
-                    anime_list.remove(anime)
-                    save_data()
-                    st.success(f"🗑️ 橡皮擦擦擦！【{target_name}】已經從手帳中輕輕擦掉囉～")
-                    st.rerun()
-                    break
-    else:
-        st.info("🥺 目前沒有資料可以刪除唷。")
+    st.subheader("💬 QUOTES / 本作神台詞（最多三句）")
+    q1 = st.text_input("🌈 LINE 1", placeholder="神台詞 1")
+    q2 = st.text_input("✨ LINE 2", placeholder="神台詞 2")
+    q3 = st.text_input("🌸 LINE 3", placeholder="神台詞 3")
