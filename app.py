@@ -5,7 +5,7 @@ import os
 # 設定網頁標題
 st.set_page_config(page_title="🌸 我的動漫像素手帳 🌸", layout="centered")
 
-# 💖 萌力全開 CSS 控制中心：加入 Idle 彈跳動畫、消滅頂部髒字、像素字卡
+# 💖 究極 CSS 控制中心：利用精靈圖技術，將主人給的圖片切片並加上 Idle 彈跳動畫
 st.markdown(
     """
     <style>
@@ -16,7 +16,7 @@ st.markdown(
         background-size: 24px 24px !important;
     }
     
-    /* 2. 徹底殺死手機頂部因側邊欄按鈕產生的 double_arrow_right 亂碼 */
+    /* 2. 徹底隱藏頂部干擾元件與亂碼 */
     header, [data-testid="stSidebarCollapsedControl"] {
         color: transparent !important;
         background: transparent !important;
@@ -31,23 +31,36 @@ st.markdown(
         font-family: "Noto Sans TC", sans-serif !important;
     }
 
-    /* 4. 【靈魂核心】讓動漫角色活過來！打造上下彈跳動畫 */
+    /* 4. 動漫角色上下彈跳動畫 */
     @keyframes pixelJump {
         0% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+        50% { transform: translateY(-12px); }
         100% { transform: translateY(0); }
     }
     
-    /* 5. 特製日系動漫像素小人組件 (放大並強化點政顆粒感) */
-    .pixel-anime-char {
+    /* 5. 【核心】像素精靈圖基本框架：使用 imgur 託管主人給的九宮格像素圖 */
+    .hero-sprite {
         display: inline-block;
-        font-size: 42px; /* 放大圖案 */
-        line-height: 1;
+        width: 66px;   /* 單個小人的寬度 */
+        height: 66px;  /* 單個小人的高度 */
+        background-image: url('https://i.imgur.com/vHqorvS.png') !important;
+        background-size: 200px 200px !important; /* 縮放整張圖以精確匹配切片 */
+        image-rendering: pixelated !important;   /* 完美保留復古點陣顆粒感 */
         animation: pixelJump 0.6s infinite ease-in-out;
-        text-shadow: 2px 2px 0px #FFC1CC;
     }
 
-    /* 6. 頂部白底黑框看板樣式 */
+    /* 6. 利用座標切片，精確召喚出圖中的每一個專屬角色 */
+    .ochaco   { background-position: -2px -2px !important; }                     /* 麗日御茶子 (左上) */
+    .deku     { background-position: -67px -2px !important; animation-delay: 0.1s; }  /* 綠谷出久 (中上) */
+    .bakugo   { background-position: -132px -2px !important; animation-delay: 0.2s; } /* 爆豪勝己 (右上) */
+    .iida     { background-position: -2px -67px !important; animation-delay: 0.15s; } /* 飯田天哉 (左中) */
+    .todoroki { background-position: -67px -67px !important; animation-delay: 0.25s; }/* 轟焦凍 (正中) */
+    .kirishima{ background-position: -132px -67px !important; animation-delay: 0.05s; }/* 切島銳兒郎 (右中) */
+    .tokoyami { background-position: -2px -132px !important; animation-delay: 0.3s; } /* 常闇踏陰 (左下) */
+    .tsuyu    { background-position: -67px -132px !important; animation-delay: 0.2s; } /* 蛙吹梅雨 (中下) */
+    .denki    { background-position: -132px -132px !important; animation-delay: 0.12s; }/* 上鳴電氣 (右下) */
+
+    /* 7. 頂部白底黑框看板樣式 */
     .header-box {
         background-color: #FFFFFF !important;
         border: 4px solid #5D4037 !important;
@@ -58,7 +71,7 @@ st.markdown(
         box-shadow: 5px 5px 0px #FFC1CC !important;
     }
 
-    /* 7. 輸入框與按鈕一律改成圓角可愛像素邊框 */
+    /* 8. 介面元件可愛圓角化 */
     .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {
         background-color: #FFFFFF !important;
         color: #5D4037 !important;
@@ -75,7 +88,7 @@ st.markdown(
         font-weight: bold !important;
     }
 
-    /* 8. 專屬精美動漫字卡 */
+    /* 9. 精美手帳字卡 */
     .anime-card {
         background-color: #FFFFFF !important;
         border: 3px solid #5D4037 !important;
@@ -127,28 +140,35 @@ def save_data():
     with open(FILE_NAME, "w", encoding="utf-8") as f:
         json.dump(anime_list, f, ensure_ascii=False, indent=4)
 
-# --- 💖 網頁最上方：召喚絕對不會壞掉、正在歡樂跳動的動漫角色群 💖 ---
+# --- 💖 網頁最上方：成功召喚主人專屬的 9 大英雄學院像素小人！ 💖 ---
 st.markdown(
     """
     <div class="header-box">
-        <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 15px;">
-            <div class="pixel-anime-char">🧑‍🎤</div>
-            <div class="pixel-anime-char" style="animation-delay: 0.15s; animation-duration: 0.7s;">🧑‍🦰</div>
-            <div class="pixel-anime-char" style="animation-delay: 0.3s; animation-duration: 0.5s;">👱‍♂️</div>
-            <div class="pixel-anime-char" style="animation-delay: 0.45s;">👾</div>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; flex-wrap: wrap;">
+            <div class="hero-sprite ochaco"></div>
+            <div class="hero-sprite deku"></div>
+            <div class="hero-sprite bakugo"></div>
+            <div class="hero-sprite iida"></div>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+            <div class="hero-sprite todoroki"></div>
+            <div class="hero-sprite kirishima"></div>
+            <div class="hero-sprite tokoyami"></div>
+            <div class="hero-sprite tsuyu"></div>
+            <div class="hero-sprite denki"></div>
         </div>
         <div style="font-size: 22px; font-weight: bold; color: #5D4037; letter-spacing: 2px;">
             👾 ANIME PIXEL DIARY 👾
         </div>
         <div style="font-size: 13px; color: #8D6E63; margin-top: 5px;">
-            ✨ 主人的專屬像素動漫手帳空間 · 萌力全開中 ✨
+            ✨ 主人的英雄學院像素秘密基地 · 點陣角色熱血跳動中 ✨
         </div>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-# 橫向導覽選單（完美適應手機版，好點選又不噴字）
+# 功能選單
 mode = st.radio(
     "🧭 請選取手帳功能：",
     [
@@ -166,12 +186,15 @@ if mode == "🌸 打开手帳庫 (看番紀錄)":
     search_keyword = st.text_input("🔮 輸入關鍵字搜搜看：", placeholder="搜尋名稱、標籤...")
     
     if anime_list:
-        for anime in anime_list:
+        for index, anime in enumerate(anime_list):
             if not search_keyword or search_keyword in anime[0] or search_keyword in anime[3]:
                 stars = "⭐" * anime[6]
                 quote_html = f"<div class='anime-quote'>💬 「 {anime[4][0]} 」</div>" if anime[4] else ""
                 
-                # 每一張動漫字卡都有獨立的白底粉框，右下角裝飾一隻彈跳的動漫Q版像素
+                # 讓手帳字卡右下角隨機分配不同的小人在跳動，超可愛！
+                sprites = ["ochaco", "deku", "bakugo", "todoroki", "tsuyu", "denki"]
+                chosen_sprite = sprites[index % len(sprites)]
+                
                 card_html = f"""
                 <div class="anime-card">
                     <div class="anime-title">
@@ -183,8 +206,8 @@ if mode == "🌸 打开手帳庫 (看番紀錄)":
                     <div class="anime-meta"><b>🏷️ 分類標籤：</b> {anime[3]}</div>
                     <div class="anime-meta"><b>💌 心得點滴：</b> {anime[5]}</div>
                     {quote_html}
-                    <div style="position: absolute; right: 15px; bottom: 5px; font-size: 20px; cubic-bezier(0.28, 0.84, 0.42, 1);">
-                        <div class="pixel-anime-char" style="animation-duration: 0.9s;">👧</div>
+                    <div style="position: absolute; right: 15px; bottom: 5px;">
+                        <div class="hero-sprite {chosen_sprite}" style="width:45px; height:45px; background-size:136px 136px; background-position: inherit; animation-duration: 0.8s;"></div>
                     </div>
                 </div>
                 """
@@ -197,17 +220,17 @@ elif mode == "➕ 填寫新紀錄 (捕捉感動)":
     st.header("✨ 寫入新紀錄")
     col1, col2 = st.columns(2)
     with col1:
-        anime_name = st.text_input("🍒 作品名稱", placeholder="例如：約會大作戰")
-        anime_author = st.text_input("✍️ 厲害的作者", placeholder="例如：橘公司老師")
+        anime_name = st.text_input("🍒 作品名稱", placeholder="例如：我的英雄學院")
+        anime_author = st.text_input("✍️ 厲害的作者", placeholder="例如：堀越耕平老師")
     with col2:
         anime_status = st.selectbox("🎯 目前進度", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
-        anime_type = st.text_input("🏷️ 類型標籤", placeholder="例如：純愛、戰鬥、後宮番")
+        anime_type = st.text_input("🏷️ 類型標籤", placeholder="例如：熱血、戰鬥、校園、像素風")
         
     anime_review = st.text_area("📝 心得悄悄話", placeholder="偷偷寫下你對這部作品的滿滿想法...")
-    anime_score = st.slider("⭐ 推薦指數大評分", 1, 5, 5)
+    anime_score = st.slider("⭐ 推薦指数大評分", 1, 5, 5)
     
     st.subheader("💬 本作神台詞")
-    q1 = st.text_input("🌈 第一句神台詞", placeholder="名台詞 1")
+    q1 = st.text_input("🌈 第一句神台詞", placeholder="例如：已經沒事了！因為，我來了！")
     
     st.write("")
     if st.button("💝 寫入晶片存檔", type="primary"):
