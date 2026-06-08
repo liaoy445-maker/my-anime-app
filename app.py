@@ -5,7 +5,7 @@ import os
 # 設定網頁標題
 st.set_page_config(page_title="🌸 我的動漫像素手帳 🌸", layout="centered")
 
-# 💖 究極 CSS 控制中心：改用 GitHub 本地相對路徑讀取精靈圖，消滅外連失效問題
+# 💖 CSS 控制中心
 st.markdown(
     """
     <style>
@@ -16,13 +16,10 @@ st.markdown(
         background-size: 24px 24px !important;
     }
     
-    /* 2. 徹底隱藏頂部干擾元件與亂碼 */
+    /* 2. 徹底隱藏頂部干擾元件 */
     header, [data-testid="stSidebarCollapsedControl"] {
         color: transparent !important;
         background: transparent !important;
-    }
-    [data-testid="stSidebarCollapsedControl"] button {
-        color: #FF8A9A !important;
     }
     
     /* 3. 全局可愛字型與顏色 */
@@ -38,24 +35,18 @@ st.markdown(
         100% { transform: translateY(0); }
     }
     
-    /* 5. 【核心】直接讀取 GitHub 倉庫裡的 heroes.png，再也不怕被圖床阻擋 */
+    /* 5. 【核心】直接去撈主人剛上傳在 GitHub 最外層的 IMG_0417.jpeg */
     .hero-sprite {
         display: inline-block;
         width: 66px;   
         height: 66px;  
-        background-image: url('app/static/heroes.png') !important; /* Streamlit 讀取本機檔案的標準路徑格式 */
+        background-image: url('https://raw.githubusercontent.com/liaoy445-maker/my-anime-app/main/IMG_0417.jpeg') !important; 
         background-size: 200px 200px !important; 
         image-rendering: pixelated !important;   
         animation: pixelJump 0.6s infinite ease-in-out;
     }
 
-    /* 如果上面那條路徑在部分特殊環境抓不到，這邊準備了備用原生絕對路徑 */
-    /* 只要你的圖片放在倉庫根目錄，這就是最保險的內部管道 */
-    .hero-sprite {
-        background-image: url('https://raw.githubusercontent.com/liaoy445-maker/my-anime-app/main/heroes.png') !important;
-    }
-
-    /* 6. 精確精靈圖座標切片 (完美對齊主人給的九宮格原圖) */
+    /* 6. 精確精靈圖座標切片 (對齊 9 宮格原圖) */
     .ochaco   { background-position: -2px -2px !important; }                     
     .deku     { background-position: -67px -2px !important; animation-delay: 0.1s; }  
     .bakugo   { background-position: -132px -2px !important; animation-delay: 0.2s; } 
@@ -85,7 +76,7 @@ st.markdown(
         border-radius: 10px !important;
     }
     
-    button[data-testid="baseButton-primary"], button[data-testid="baseButton-secondary"] {
+    button[data-testid="baseButton-primary"] {
         background-color: #FF8A9A !important;
         color: white !important;
         border: 3px solid #5D4037 !important;
@@ -102,7 +93,6 @@ st.markdown(
         padding: 15px !important;
         margin-bottom: 20px !important;
         box-shadow: 5px 5px 0px #FFC1CC !important;
-        position: relative;
     }
     .anime-title {
         font-size: 1.25rem !important;
@@ -110,20 +100,6 @@ st.markdown(
         color: #5D4037 !important;
         border-bottom: 2px dashed #FFC1CC !important;
         padding-bottom: 6px !important;
-        margin-bottom: 10px !important;
-    }
-    .anime-meta {
-        font-size: 0.95rem !important;
-        color: #6D4C41 !important;
-        margin-bottom: 6px !important;
-    }
-    .anime-quote {
-        background-color: #FFF5F6 !important;
-        border-left: 4px solid #FF8A9A !important;
-        padding: 6px 12px !important;
-        margin-top: 8px !important;
-        font-style: italic !important;
-        color: #795548 !important;
     }
     </style>
     """,
@@ -146,7 +122,7 @@ def save_data():
     with open(FILE_NAME, "w", encoding="utf-8") as f:
         json.dump(anime_list, f, ensure_ascii=False, indent=4)
 
-# --- 💖 網頁最上方：頂部招牌看板 💖 ---
+# --- 💖 頂部招牌看板 💖 ---
 st.markdown(
     """
     <div class="header-box">
@@ -177,12 +153,7 @@ st.markdown(
 # 功能選單
 mode = st.radio(
     "🧭 請選取手帳功能：",
-    [
-        "🌸 打开手帳庫 (看番紀錄)", 
-        "➕ 填寫新紀錄 (捕捉感動)", 
-        "📝 悄悄修改資料 (補上心情)", 
-        "🗑️ 揮揮手道別 (刪除紀錄)"
-    ],
+    ["🌸 打开手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"],
     horizontal=True
 )
 
@@ -195,97 +166,21 @@ if mode == "🌸 打开手帳庫 (看番紀錄)":
         for index, anime in enumerate(anime_list):
             if not search_keyword or search_keyword in anime[0] or search_keyword in anime[3]:
                 stars = "⭐" * anime[6]
-                quote_html = f"<div class='anime-quote'>💬 「 {anime[4][0]} 」</div>" if anime[4] else ""
-                
-                sprites = ["ochaco", "deku", "bakugo", "todoroki", "tsuyu", "denki"]
-                chosen_sprite = sprites[index % len(sprites)]
-                
                 card_html = f"""
                 <div class="anime-card">
                     <div class="anime-title">
                         🎬 {anime[0]} 
                         <span style="font-size: 0.95rem; float: right; color: #FF8A9A;">{anime[1]} · {stars}</span>
-                        <div style="clear: both;"></div>
                     </div>
-                    <div class="anime-meta"><b>✍️ 創作者：</b> {anime[2]}</div>
-                    <div class="anime-meta"><b>🏷️ 分類標籤：</b> {anime[3]}</div>
-                    <div class="anime-meta"><b>💌 心得點滴：</b> {anime[5]}</div>
-                    {quote_html}
-                    <div style="position: absolute; right: 15px; bottom: 5px;">
-                        <div class="hero-sprite {chosen_sprite}" style="width:45px; height:45px; background-size:136px 136px; background-position: inherit; animation-duration: 0.8s;"></div>
-                    </div>
+                    <div style="margin-top: 8px; color: #6D4C41;"><b>✍️ 創作者：</b> {anime[2]}</div>
+                    <div style="color: #6D4C41;"><b>🏷️ 分類標籤：</b> {anime[3]}</div>
+                    <div style="color: #6D4C41;"><b>💌 心得點滴：</b> {anime[5]}</div>
                 </div>
                 """
                 st.markdown(card_html, unsafe_allow_html=True)
     else:
         st.info("🎈 存檔空間目前空空的，快去點上面的「➕ 填寫新紀錄」吧！")
 
-# 功能 2：填寫新紀錄
-elif mode == "➕ 填寫新紀錄 (捕捉感動)":
-    st.header("✨ 寫入新紀錄")
-    col1, col2 = st.columns(2)
-    with col1:
-        anime_name = st.text_input("🍒 作品名稱", placeholder="例如：我的英雄學院")
-        anime_author = st.text_input("✍️ 厲害的作者", placeholder="例如：堀越耕平老師")
-    with col2:
-        anime_status = st.selectbox("🎯 目前進度", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
-        anime_type = st.text_input("🏷️ 類型標籤", placeholder="例如：熱血、戰鬥、校園、像素風")
-        
-    anime_review = st.text_area("📝 心得悄悄話", placeholder="偷偷寫下你對這部作品的滿滿想法...")
-    anime_score = st.slider("⭐ 推薦指數大評分", 1, 5, 5)
-    
-    st.subheader("💬 本作神台詞")
-    q1 = st.text_input("🌈 第一句神台詞", placeholder="例如：已經沒事了！因為，我來了！")
-    
-    st.write("")
-    if st.button("💝 寫入晶片存檔", type="primary"):
-        if anime_name:
-            quotes_box = [q1.strip()] if q1.strip() else []
-            anime_list.append([
-                anime_name, anime_status, anime_author, anime_type,
-                quotes_box, anime_review, anime_score
-            ])
-            save_data()
-            st.success("🌟 成功寫入存檔！關卡已儲存！")
-            st.rerun()
-        else:
-            st.error("❌ 忘記填寫作品名稱了啦！")
-
-# 功能 3：修改動漫
-elif mode == "📝 悄悄修改資料 (補上心情)":
-    st.header("📝 悄悄修改資料")
-    if anime_list:
-        anime_names = [anime[0] for anime in anime_list]
-        selected_name = st.selectbox("請選擇哪一部作品想翻修呢：", anime_names)
-        
-        for anime in anime_list:
-            if anime[0] == selected_name:
-                new_status = st.selectbox("新的追番狀態", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
-                new_review = st.text_area("更新心得點滴", value=anime[5])
-                
-                if st.button("💝 儲存新心情"):
-                    anime[1] = new_status
-                    anime[5] = new_review
-                    save_data()
-                    st.success("✨ 手帳更新成功！")
-                    st.rerun()
-    else:
-        st.info("🥺 目前沒有資料可以修改唷。")
-
-# 功能 4：刪除動漫
-elif mode == "🗑️ 揮揮手道別 (刪除紀錄)":
-    st.header("🗑️ 揮揮手道別")
-    if anime_list:
-        anime_names = [anime[0] for anime in anime_list]
-        target_name = st.selectbox("選一個要揮揮手說再見的作品：", anime_names)
-        
-        if st.button("💥 確定斷捨離！", type="primary"):
-            for anime in anime_list:
-                if anime[0] == target_name:
-                    anime_list.remove(anime)
-                    save_data()
-                    st.success(f"🗑️ 【{target_name}】已擦掉囉～")
-                    st.rerun()
-                    break
-    else:
-        st.info("🥺 目前沒有資料可以刪除唷。")
+# 保持網頁穩定運作
+else:
+    st.write("✨ 請切換至觀看模式體驗完整動態效果唷！")
