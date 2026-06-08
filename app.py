@@ -5,7 +5,7 @@ import os
 # 設定網頁標題
 st.set_page_config(page_title="🌸 我的動漫像素手帳 🌸", layout="centered")
 
-# 💖 CSS 魔法控制中心：讓 9 個獨立的小圖片動起來！
+# 💖 CSS 魔法控制中心：直接把內建大圖切成 9 個會跳動的小方塊！
 st.markdown(
     """
     <style>
@@ -39,20 +39,47 @@ st.markdown(
         box-shadow: 5px 5px 0px #FFC1CC !important;
     }
 
-    /* 5. 核心：定義上下彈跳動畫 */
+    /* 5. 核心：定義像素跳動動畫 */
     @keyframes pixelJump {
         0% { transform: translateY(0); }
-        50% { transform: translateY(-8px); } /* 向上跳 8 像素 */
+        50% { transform: translateY(-8px); }
         100% { transform: translateY(0); }
     }
 
-    /* 6. 讓包裝圖片的容器套用動畫 */
-    .jump-container {
+    /* 6. 像素小人外框：固定 64x64 大小並套用跳動 */
+    .hero-frame {
         display: inline-block;
+        width: 64px;
+        height: 64px;
+        overflow: hidden;
+        position: relative;
+        background: transparent;
         animation: pixelJump 0.6s infinite ease-in-out;
     }
 
-    /* 7. 介面元件可愛圓角化 */
+    /* 7. 切片核心：透過 object-fit 控制只顯示原圖的 1/3 區塊 */
+    .hero-frame img {
+        width: 192px !important;   /* 剛好是 64px * 3 欄 */
+        height: 192px !important;  /* 剛好是 64px * 3 列 */
+        max-width: none !important;
+        object-fit: none !important;
+        position: absolute;
+    }
+
+    /* 🎯 準確定位九宮格中每個小人的座標 */
+    .pos-1 { left: 0px; top: 0px; }
+    .pos-2 { left: -64px; top: 0px; }
+    .pos-3 { left: -128px; top: 0px; }
+    
+    .pos-4 { left: 0px; top: -64px; }
+    .pos-5 { left: -64px; top: -64px; }
+    .pos-6 { left: -128px; top: -64px; }
+    
+    .pos-7 { left: 0px; top: -128px; }
+    .pos-8 { left: -64px; top: -128px; }
+    .pos-9 { left: -128px; top: -128px; }
+
+    /* 8. 介面元件可愛圓角化 */
     .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {
         background-color: #FFFFFF !important;
         color: #5D4037 !important;
@@ -69,7 +96,7 @@ st.markdown(
         font-weight: bold !important;
     }
 
-    /* 8. 精美手帳字卡 */
+    /* 9. 精美手帳字卡 */
     .anime-card {
         background-color: #FFFFFF !important;
         border: 3px solid #5D4037 !important;
@@ -117,45 +144,48 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 🎯 準備 9 張去背小圖的穩定分流網址
-heroes = {
-    "ochaco": "https://i.imgur.com/vH97Oco.png",     # 御茶子
-    "deku": "https://i.imgur.com/f0m76s9.png",       # 出久
-    "bakugo": "https://i.imgur.com/kSPhsQY.png",     # 爆豪
-    "iida": "https://i.imgur.com/KofW8tT.png",       # 飯田
-    "todoroki": "https://i.imgur.com/w90Lg2q.png",   # 轟
-    "kirishima": "https://i.imgur.com/3Z6H9kX.png",  # 切島
-    "tokoyami": "https://i.imgur.com/C30w5G3.png",   # 常闇
-    "tsuyu": "https://i.imgur.com/R8pP6rC.png",      # 梅雨
-    "denki": "https://i.imgur.com/V7w7fT6.png"       # 上鳴
-}
+# 偵測主人 GitHub 裡現有的圖片檔案名稱
+img_path = "IMG_0417.jpeg" if os.path.exists("IMG_0417.jpeg") else "heroes.png"
 
-# 🌟 使用 Streamlit 的欄位功能（Columns）排成美美的九宮格
-# 第一排：4 個人
-st.markdown('<div style="margin-bottom: 10px;">', unsafe_allow_html=True)
-c1, c2, c3, c4 = st.columns(4)
-with c1:
-    st.markdown(f'<div class="jump-container" style="animation-delay: 0.0s;"><img src="{heroes["ochaco"]}" width="65"></div>', unsafe_allow_html=True)
-with c2:
-    st.markdown(f'<div class="jump-container" style="animation-delay: 0.1s;"><img src="{heroes["deku"]}" width="65"></div>', unsafe_allow_html=True)
-with c3:
-    st.markdown(f'<div class="jump-container" style="animation-delay: 0.2s;"><img src="{heroes["bakugo"]}" width="65"></div>', unsafe_allow_html=True)
-with c4:
-    st.markdown(f'<div class="jump-container" style="animation-delay: 0.15s;"><img src="{heroes["iida"]}" width="65"></div>', unsafe_allow_html=True)
+# 如果找得到原圖，就直接在網頁內建進行會跳動的九宮格切片！
+if os.path.exists(img_path):
+    # 為了在純 HTML 裡讀取 Streamlit 本地圖片，轉為 base64 碼
+    import base64
+    with open(img_path, "rb") as image_file:
+        encoded_img = base64.b64encode(image_file.read()).decode()
+    img_src = f"data:image/jpeg;base64,{encoded_img}"
 
-# 第二排：5 個人
-st.markdown('<div style="margin-top: 15px; margin-bottom: 15px;">', unsafe_allow_html=True)
-c5, c6, c7, c8, c9 = st.columns(5)
-with c5:
-    st.markdown(f'<div class="jump-container" style="animation-delay: 0.25s;"><img src="{heroes["todoroki"]}" width="55"></div>', unsafe_allow_html=True)
-with c6:
-    st.markdown(f'<div class="jump-container" style="animation-delay: 0.05s;"><img src="{heroes["kirishima"]}" width="55"></div>', unsafe_allow_html=True)
-with c7:
-    st.markdown(f'<div class="jump-container" style="animation-delay: 0.3s;"><img src="{heroes["tokoyami"]}" width="55"></div>', unsafe_allow_html=True)
-with c8:
-    st.markdown(f'<div class="jump-container" style="animation-delay: 0.2s;"><img src="{heroes["tsuyu"]}" width="55"></div>', unsafe_allow_html=True)
-with c9:
-    st.markdown(f'<div class="jump-container" style="animation-delay: 0.12s;"><img src="{heroes["denki"]}" width="55"></div>', unsafe_allow_html=True)
+    # 第一排：前 3 位小英雄（錯開跳動時間）
+    st.markdown('<div style="margin-bottom: 10px;">', unsafe_allow_html=True)
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown(f'<div class="hero-frame" style="animation-delay: 0.0s;"><img src="{img_src}" class="pos-1"></div>', unsafe_allow_html=True)
+    with c2:
+        st.markdown(f'<div class="hero-frame" style="animation-delay: 0.1s;"><img src="{img_src}" class="pos-2"></div>', unsafe_allow_html=True)
+    with c3:
+        st.markdown(f'<div class="hero-frame" style="animation-delay: 0.2s;"><img src="{img_src}" class="pos-3"></div>', unsafe_allow_html=True)
+
+    # 第二排：中間 3 位小英雄
+    st.markdown('<div style="margin-bottom: 10px;">', unsafe_allow_html=True)
+    c4, c5, c6 = st.columns(3)
+    with c4:
+        st.markdown(f'<div class="hero-frame" style="animation-delay: 0.15s;"><img src="{img_src}" class="pos-4"></div>', unsafe_allow_html=True)
+    with c5:
+        st.markdown(f'<div class="hero-frame" style="animation-delay: 0.05s;"><img src="{img_src}" class="pos-5"></div>', unsafe_allow_html=True)
+    with c6:
+        st.markdown(f'<div class="hero-frame" style="animation-delay: 0.25s;"><img src="{img_src}" class="pos-6"></div>', unsafe_allow_html=True)
+
+    # 第三排：後 3 位小英雄
+    st.markdown('<div style="margin-bottom: 10px;">', unsafe_allow_html=True)
+    c7, c8, c9 = st.columns(3)
+    with c7:
+        st.markdown(f'<div class="hero-frame" style="animation-delay: 0.3s;"><img src="{img_src}" class="pos-7"></div>', unsafe_allow_html=True)
+    with c8:
+        st.markdown(f'<div class="hero-frame" style="animation-delay: 0.12s;"><img src="{img_src}" class="pos-8"></div>', unsafe_allow_html=True)
+    with c9:
+        st.markdown(f'<div class="hero-frame" style="animation-delay: 0.22s;"><img src="{img_src}" class="pos-9"></div>', unsafe_allow_html=True)
+else:
+    st.write("🌸 正在同步 GitHub 動漫晶片中...")
 
 st.markdown(
     """
@@ -207,4 +237,46 @@ elif mode == "➕ 填寫新紀錄 (捕捉感動)":
         anime_author = st.text_input("✍️ 厲害的作者")
     with col2:
         anime_status = st.selectbox("🎯 目前進度", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
-        anime_type = st.text
+        anime_type = st.text_input("🏷️ 類型標籤")
+        
+    anime_review = st.text_area("📝 心得悄悄話")
+    anime_score = st.slider("⭐ 推薦指數", 1, 5, 5)
+    
+    if st.button("💝 寫入晶片存檔", type="primary"):
+        if anime_name:
+            anime_list.append([anime_name, anime_status, anime_author, anime_type, [], anime_review, anime_score])
+            save_data()
+            st.success("🌟 成功寫入存檔！")
+            st.rerun()
+
+# 功能 3：悄悄修改資料
+elif mode == "📝 悄悄修改資料 (補上心情)":
+    st.header("📝 悄悄修改資料")
+    if anime_list:
+        anime_names = [anime[0] for anime in anime_list]
+        selected_name = st.selectbox("請選擇哪一部作品想翻修呢：", anime_names)
+        for anime in anime_list:
+            if anime[0] == selected_name:
+                new_status = st.selectbox("新的追番狀態", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
+                new_review = st.text_area("更新心得點滴", value=anime[5])
+                if st.button("💝 儲存新心情"):
+                    anime[1] = new_status
+                    anime[5] = new_review
+                    save_data()
+                    st.success("✨ 手帳更新成功！")
+                    st.rerun()
+
+# 功能 4：揮揮手道別
+elif mode == "🗑️ 揮揮手道別 (刪除紀錄)":
+    st.header("🗑️ 揮揮手道別")
+    if anime_list:
+        anime_names = [anime[0] for anime in anime_list]
+        target_name = st.selectbox("選一個要揮揮手說再見的作品：", anime_names)
+        if st.button("💥 確定斷捨離！", type="primary"):
+            for anime in anime_list:
+                if anime[0] == target_name:
+                    anime_list.remove(anime)
+                    save_data()
+                    st.success(f"🗑️ 已擦掉囉～")
+                    st.rerun()
+                    break
