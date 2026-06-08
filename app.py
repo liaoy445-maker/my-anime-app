@@ -91,4 +91,10 @@ anime_list = st.session_state.anime_list
 
 def save_data():
     with open(FILE_NAME, "w", encoding="utf-8") as f:
-        json.dump(anime_list
+        json.dump(anime_list, f, ensure_ascii=False, indent=4)
+
+# --- 💖 頂部招牌看板 💖 ---
+st.markdown(
+    """
+    <div class="header-box">
+        <div style="font-size: 26px;
