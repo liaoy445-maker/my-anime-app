@@ -107,7 +107,7 @@ st.markdown('<div class="header-box"><div class="main-title">' + BANNER_TITLE + 
 if "current_page_idx" not in st.session_state:
     st.session_state.current_page_idx = 0
 
-menu_options = ["🌸 打开手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"]
+menu_options = ["🌸 打開手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"]
 
 # 功能選單
 mode = st.radio(
@@ -121,7 +121,7 @@ mode = st.radio(
 st.session_state.current_page_idx = menu_options.index(mode)
 
 # 功能 1：查看與搜尋
-if mode == "🌸 打开手帳庫 (看番紀錄)":
+if mode == "🌸 打開手帳庫 (看番紀錄)":
     st.header("🔍 翻閱我的動漫手帳庫")
     search_keyword = st.text_input("🔮 輸入關鍵字搜搜看：", placeholder="搜尋名稱、標籤...", key="real_search_input")
     
