@@ -5,7 +5,7 @@ import os
 # 設定網頁標題
 st.set_page_config(page_title="🌸 我的動漫像素手帳 🌸", layout="centered")
 
-# 💖 究極 CSS 控制中心：利用精靈圖技術，將主人給的圖片切片並加上 Idle 彈跳動畫
+# 💖 究極 CSS 控制中心：改用 GitHub 本地相對路徑讀取精靈圖，消滅外連失效問題
 st.markdown(
     """
     <style>
@@ -38,27 +38,33 @@ st.markdown(
         100% { transform: translateY(0); }
     }
     
-    /* 5. 【核心】像素精靈圖基本框架：使用 imgur 託管主人給的九宮格像素圖 */
+    /* 5. 【核心】直接讀取 GitHub 倉庫裡的 heroes.png，再也不怕被圖床阻擋 */
     .hero-sprite {
         display: inline-block;
-        width: 66px;   /* 單個小人的寬度 */
-        height: 66px;  /* 單個小人的高度 */
-        background-image: url('https://i.imgur.com/vHqorvS.png') !important;
-        background-size: 200px 200px !important; /* 縮放整張圖以精確匹配切片 */
-        image-rendering: pixelated !important;   /* 完美保留復古點陣顆粒感 */
+        width: 66px;   
+        height: 66px;  
+        background-image: url('app/static/heroes.png') !important; /* Streamlit 讀取本機檔案的標準路徑格式 */
+        background-size: 200px 200px !important; 
+        image-rendering: pixelated !important;   
         animation: pixelJump 0.6s infinite ease-in-out;
     }
 
-    /* 6. 利用座標切片，精確召喚出圖中的每一個專屬角色 */
-    .ochaco   { background-position: -2px -2px !important; }                     /* 麗日御茶子 (左上) */
-    .deku     { background-position: -67px -2px !important; animation-delay: 0.1s; }  /* 綠谷出久 (中上) */
-    .bakugo   { background-position: -132px -2px !important; animation-delay: 0.2s; } /* 爆豪勝己 (右上) */
-    .iida     { background-position: -2px -67px !important; animation-delay: 0.15s; } /* 飯田天哉 (左中) */
-    .todoroki { background-position: -67px -67px !important; animation-delay: 0.25s; }/* 轟焦凍 (正中) */
-    .kirishima{ background-position: -132px -67px !important; animation-delay: 0.05s; }/* 切島銳兒郎 (右中) */
-    .tokoyami { background-position: -2px -132px !important; animation-delay: 0.3s; } /* 常闇踏陰 (左下) */
-    .tsuyu    { background-position: -67px -132px !important; animation-delay: 0.2s; } /* 蛙吹梅雨 (中下) */
-    .denki    { background-position: -132px -132px !important; animation-delay: 0.12s; }/* 上鳴電氣 (右下) */
+    /* 如果上面那條路徑在部分特殊環境抓不到，這邊準備了備用原生絕對路徑 */
+    /* 只要你的圖片放在倉庫根目錄，這就是最保險的內部管道 */
+    .hero-sprite {
+        background-image: url('https://raw.githubusercontent.com/liaoy445-maker/my-anime-app/main/heroes.png') !important;
+    }
+
+    /* 6. 精確精靈圖座標切片 (完美對齊主人給的九宮格原圖) */
+    .ochaco   { background-position: -2px -2px !important; }                     
+    .deku     { background-position: -67px -2px !important; animation-delay: 0.1s; }  
+    .bakugo   { background-position: -132px -2px !important; animation-delay: 0.2s; } 
+    .iida     { background-position: -2px -67px !important; animation-delay: 0.15s; } 
+    .todoroki { background-position: -67px -67px !important; animation-delay: 0.25s; }
+    .kirishima{ background-position: -132px -67px !important; animation-delay: 0.05s; }
+    .tokoyami { background-position: -2px -132px !important; animation-delay: 0.3s; } 
+    .tsuyu    { background-position: -67px -132px !important; animation-delay: 0.2s; } 
+    .denki    { background-position: -132px -132px !important; animation-delay: 0.12s; }
 
     /* 7. 頂部白底黑框看板樣式 */
     .header-box {
@@ -140,7 +146,7 @@ def save_data():
     with open(FILE_NAME, "w", encoding="utf-8") as f:
         json.dump(anime_list, f, ensure_ascii=False, indent=4)
 
-# --- 💖 網頁最上方：成功召喚主人專屬的 9 大英雄學院像素小人！ 💖 ---
+# --- 💖 網頁最上方：頂部招牌看板 💖 ---
 st.markdown(
     """
     <div class="header-box">
@@ -191,7 +197,6 @@ if mode == "🌸 打开手帳庫 (看番紀錄)":
                 stars = "⭐" * anime[6]
                 quote_html = f"<div class='anime-quote'>💬 「 {anime[4][0]} 」</div>" if anime[4] else ""
                 
-                # 讓手帳字卡右下角隨機分配不同的小人在跳動，超可愛！
                 sprites = ["ochaco", "deku", "bakugo", "todoroki", "tsuyu", "denki"]
                 chosen_sprite = sprites[index % len(sprites)]
                 
@@ -227,7 +232,7 @@ elif mode == "➕ 填寫新紀錄 (捕捉感動)":
         anime_type = st.text_input("🏷️ 類型標籤", placeholder="例如：熱血、戰鬥、校園、像素風")
         
     anime_review = st.text_area("📝 心得悄悄話", placeholder="偷偷寫下你對這部作品的滿滿想法...")
-    anime_score = st.slider("⭐ 推薦指数大評分", 1, 5, 5)
+    anime_score = st.slider("⭐ 推薦指數大評分", 1, 5, 5)
     
     st.subheader("💬 本作神台詞")
     q1 = st.text_input("🌈 第一句神台詞", placeholder="例如：已經沒事了！因為，我來了！")
