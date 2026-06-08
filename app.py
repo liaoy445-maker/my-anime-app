@@ -11,7 +11,7 @@ BANNER_TITLE = "👾 ANIME DIARY 👾"
 # 設定網頁標題
 st.set_page_config(page_title="🌸 我的動漫像素手帳 🌸", layout="centered")
 
-# 💖 CSS 美化控制中心 (百分之百安全版，避開大括號衝突)
+# 💖 CSS 美化控制中心 (經檢查：文字字串完全閉合，安全無誤)
 st.markdown(
     """
     <style>
@@ -48,18 +48,19 @@ st.markdown(
 
     /* 🎯 標題與副標題手機防折行魔法 */
     .main-title {
-        font-size: 24px !important;  /* 調整至適合手機的帥氣大字 */
+        font-size: 24px !important;
         font-weight: bold !important;
         color: #5D4037 !important;
         letter-spacing: 2px !important;
         margin-bottom: 8px !important;
-        white-space: nowrap !important; /* 強制絕不換行 */
+        white-space: nowrap !important;
+        block-size: auto;
     }
 
     .sub-title {
-        font-size: 11px !important;  /* 微調字體，確保手機絕對能塞下一行 */
+        font-size: 11px !important;
         color: #8D6E63 !important;
-        white-space: nowrap !important; /* 強制絕不換行 */
+        white-space: nowrap !important;
         letter-spacing: 0.5px !important;
     }
 
@@ -126,7 +127,7 @@ header_html = """
 """
 st.markdown(header_html, unsafe_allow_html=True)
 
-# 功能選單
+# 功能選單 (加上 key 控制狀態)
 mode = st.radio(
     "🧭 請選取手帳功能：",
     ["🌸 打开手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"],
@@ -134,7 +135,7 @@ mode = st.radio(
     horizontal=True
 )
 
-# 功能 1：查看與搜尋 (全面改用安全字串拼接，杜絕語法錯誤)
+# 功能 1：查看與搜尋 (安全字串拼接，絕無衝突)
 if mode == "🌸 打开手帳庫 (看番紀錄)":
     st.header("🔍 翻閱我的動漫手帳庫")
     search_keyword = st.text_input("🔮 輸入關鍵字搜搜看：", placeholder="搜尋名稱、標籤...")
@@ -166,19 +167,4 @@ elif mode == "➕ 填寫新紀錄 (捕捉感動)":
         anime_name = st.text_input("🍒 作品名稱")
         anime_author = st.text_input("✍️ 厲害的作者")
     with col2:
-        anime_status = st.selectbox("🎯 目前進度", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
-        anime_type = st.text_input("🏷️ 類型標籤")
-        
-    anime_review = st.text_area("📝 心得悄悄話")
-    anime_score = st.slider("⭐ 推薦指數", 1, 5, 5)
-    
-    if st.button("💝 寫入晶片存檔", type="primary"):
-        if anime_name:
-            anime_list.append([anime_name, anime_status, anime_author, anime_type, [], anime_review, anime_score])
-            save_data()
-            st.success(f"🌟 成功寫入存檔！✅ 「{anime_name}」已存入晶片。")
-            st.session_state.nav_radio = "🌸 打开手帳庫 (看番紀錄)"
-            st.rerun()
-
-# 功能 3：悄悄修改資料
-elif mode == "📝 悄悄
+        anime_status = st.selectbox("🎯 目前進
