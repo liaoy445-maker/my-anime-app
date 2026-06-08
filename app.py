@@ -97,4 +97,49 @@ def save_data():
 st.markdown(
     """
     <div class="header-box">
-        <div style="font-size: 26px;
+        <div style="font-size: 26px; font-weight: bold; color: #5D4037; letter-spacing: 2px; margin-bottom: 5px;">
+            👾 ANIME PIXEL DIARY 👾
+        </div>
+        <div style="font-size: 14px; color: #8D6E63;">
+            ✨ 主人的動漫秘密基地 · 紀錄追番的每一刻感動 ✨
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# 功能選單
+mode = st.radio(
+    "🧭 請選取手帳功能：",
+    ["🌸 打开手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"],
+    horizontal=True
+)
+
+# 功能 1：查看與搜尋
+if mode == "🌸 打开手帳庫 (看番紀錄)":
+    st.header("🔍 翻閱我的動漫手帳庫")
+    search_keyword = st.text_input("🔮 輸入關鍵字搜搜看：", placeholder="搜尋名稱、標籤...")
+    
+    if anime_list:
+        for index, anime in enumerate(anime_list):
+            if not search_keyword or search_keyword in anime[0] or search_keyword in anime[3]:
+                stars = "⭐" * anime[6]
+                card_html = f"""
+                <div class="anime-card">
+                    <div class="anime-title">
+                        🎬 {anime[0]} 
+                        <span style="font-size: 0.95rem; float: right; color: #FF8A9A;">{anime[1]} · {stars}</span>
+                    </div>
+                    <div style="margin-top: 8px; color: #6D4C41;"><b>✍️ 創作者：</b> {anime[2]}</div>
+                    <div style="color: #6D4C41;"><b>🏷️ 分類標籤：</b> {anime[3]}</div>
+                    <div style="color: #6D4C41;"><b>💌 心得點滴：</b> {anime[5]}</div>
+                </div>
+                """
+                st.markdown(card_html, unsafe_allow_html=True)
+    else:
+        st.info("🎈 存檔空間目前空空的，快去點上面的「➕ 填寫新紀錄」吧！")
+
+# 功能 2：填寫新紀錄
+elif mode == "➕ 填寫新紀錄 (捕捉感動)":
+    st.header("✨ 寫入新紀錄")
+    col1, col2 = st.columns(2)
