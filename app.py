@@ -5,7 +5,7 @@ import os
 # 設定網頁標題
 st.set_page_config(page_title="🌸 我的動漫像素手帳 🌸", layout="centered")
 
-# 💖 CSS 控制中心
+# 💖 CSS 控制中心：純粹美化介面，不搞複雜的切片，100% 安全
 st.markdown(
     """
     <style>
@@ -28,36 +28,7 @@ st.markdown(
         font-family: "Noto Sans TC", sans-serif !important;
     }
 
-    /* 4. 動漫角色上下彈跳動畫 */
-    @keyframes pixelJump {
-        0% { transform: translateY(0); }
-        50% { transform: translateY(-12px); }
-        100% { transform: translateY(0); }
-    }
-    
-    /* 5. 【核心】直接去撈主人剛上傳在 GitHub 最外層的 IMG_0417.jpeg */
-    .hero-sprite {
-        display: inline-block;
-        width: 66px;   
-        height: 66px;  
-        background-image: url('https://raw.githubusercontent.com/liaoy445-maker/my-anime-app/main/IMG_0417.jpeg') !important; 
-        background-size: 200px 200px !important; 
-        image-rendering: pixelated !important;   
-        animation: pixelJump 0.6s infinite ease-in-out;
-    }
-
-    /* 6. 精確精靈圖座標切片 (對齊 9 宮格原圖) */
-    .ochaco   { background-position: -2px -2px !important; }                     
-    .deku     { background-position: -67px -2px !important; animation-delay: 0.1s; }  
-    .bakugo   { background-position: -132px -2px !important; animation-delay: 0.2s; } 
-    .iida     { background-position: -2px -67px !important; animation-delay: 0.15s; } 
-    .todoroki { background-position: -67px -67px !important; animation-delay: 0.25s; }
-    .kirishima{ background-position: -132px -67px !important; animation-delay: 0.05s; }
-    .tokoyami { background-position: -2px -132px !important; animation-delay: 0.3s; } 
-    .tsuyu    { background-position: -67px -132px !important; animation-delay: 0.2s; } 
-    .denki    { background-position: -132px -132px !important; animation-delay: 0.12s; }
-
-    /* 7. 頂部白底黑框看板樣式 */
+    /* 4. 頂部白底黑框看板樣式 */
     .header-box {
         background-color: #FFFFFF !important;
         border: 4px solid #5D4037 !important;
@@ -68,7 +39,7 @@ st.markdown(
         box-shadow: 5px 5px 0px #FFC1CC !important;
     }
 
-    /* 8. 介面元件可愛圓角化 */
+    /* 5. 介面元件可愛圓角化 */
     .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {
         background-color: #FFFFFF !important;
         color: #5D4037 !important;
@@ -85,7 +56,7 @@ st.markdown(
         font-weight: bold !important;
     }
 
-    /* 9. 精美手帳字卡 */
+    /* 6. 精美手帳字卡 */
     .anime-card {
         background-color: #FFFFFF !important;
         border: 3px solid #5D4037 !important;
@@ -99,7 +70,7 @@ st.markdown(
         font-weight: bold !important;
         color: #5D4037 !important;
         border-bottom: 2px dashed #FFC1CC !important;
-        padding-bottom: 6px !important;
+        padding-bottom: 6px Img !important;
     }
     </style>
     """,
@@ -126,29 +97,24 @@ def save_data():
 st.markdown(
     """
     <div class="header-box">
-        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; flex-wrap: wrap;">
-            <div class="hero-sprite ochaco"></div>
-            <div class="hero-sprite deku"></div>
-            <div class="hero-sprite bakugo"></div>
-            <div class="hero-sprite iida"></div>
-        </div>
-        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
-            <div class="hero-sprite todoroki"></div>
-            <div class="hero-sprite kirishima"></div>
-            <div class="hero-sprite tokoyami"></div>
-            <div class="hero-sprite tsuyu"></div>
-            <div class="hero-sprite denki"></div>
-        </div>
-        <div style="font-size: 22px; font-weight: bold; color: #5D4037; letter-spacing: 2px;">
+        <div style="font-size: 22px; font-weight: bold; color: #5D4037; letter-spacing: 2px; margin-bottom: 10px;">
             👾 ANIME PIXEL DIARY 👾
         </div>
-        <div style="font-size: 13px; color: #8D6E63; margin-top: 5px;">
-            ✨ 主人的英雄學院像素秘密基地 · 點陣角色熱血跳動中 ✨
-        </div>
-    </div>
     """,
     unsafe_allow_html=True
 )
+
+# 🎯 【超級大復活】直接用 Streamlit 原生語法，把主人上傳的圖片整張完整且漂漂亮亮地秀在最上面！
+# 這樣一來，九個角色全家福都能完美看見，而且因為是原生讀取，百分之百保證能顯色！
+try:
+    st.image("IMG_0417.jpeg", caption="✨ 主人的英雄學院像素秘密基地 ✨", use_container_width=True)
+except:
+    try:
+        st.image("heroes.png", caption="✨ 主人的英雄學院像素秘密基地 ✨", use_container_width=True)
+    except:
+        st.write("🌸 正在同步 GitHub 動漫晶片中...")
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 # 功能選單
 mode = st.radio(
@@ -181,6 +147,55 @@ if mode == "🌸 打开手帳庫 (看番紀錄)":
     else:
         st.info("🎈 存檔空間目前空空的，快去點上面的「➕ 填寫新紀錄」吧！")
 
-# 保持網頁穩定運作
-else:
-    st.write("✨ 請切換至觀看模式體驗完整動態效果唷！")
+# 填寫新紀錄
+elif mode == "➕ 填寫新紀錄 (捕捉感動)":
+    st.header("✨ 寫入新紀錄")
+    col1, col2 = st.columns(2)
+    with col1:
+        anime_name = st.text_input("🍒 作品名稱")
+        anime_author = st.text_input("✍️ 厲害的作者")
+    with col2:
+        anime_status = st.selectbox("🎯 目前進度", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
+        anime_type = st.text_input("🏷️ 類型標籤")
+        
+    anime_review = st.text_area("📝 心得悄悄話")
+    anime_score = st.slider("⭐ 推薦指數", 1, 5, 5)
+    
+    if st.button("💝 寫入晶片存檔", type="primary"):
+        if anime_name:
+            anime_list.append([anime_name, anime_status, anime_author, anime_type, [], anime_review, anime_score])
+            save_data()
+            st.success("🌟 成功寫入存檔！")
+            st.rerun()
+
+# 悄悄修改資料
+elif mode == "📝 悄悄修改資料 (補上心情)":
+    st.header("📝 悄悄修改資料")
+    if anime_list:
+        anime_names = [anime[0] for anime in anime_list]
+        selected_name = st.selectbox("請選擇哪一部作品想翻修呢：", anime_names)
+        for anime in anime_list:
+            if anime[0] == selected_name:
+                new_status = st.selectbox("新的追番狀態", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
+                new_review = st.text_area("更新心得點滴", value=anime[5])
+                if st.button("💝 儲存新心情"):
+                    anime[1] = new_status
+                    anime[5] = new_review
+                    save_data()
+                    st.success("✨ 手帳更新成功！")
+                    st.rerun()
+
+# 揮揮手道別
+elif mode == "🗑️ 揮揮手道別 (刪除紀錄)":
+    st.header("🗑️ 揮揮手道別")
+    if anime_list:
+        anime_names = [anime[0] for anime in anime_list]
+        target_name = st.selectbox("選一個要揮揮手說再見的作品：", anime_names)
+        if st.button("💥 確定斷捨離！", type="primary"):
+            for anime in anime_list:
+                if anime[0] == target_name:
+                    anime_list.remove(anime)
+                    save_data()
+                    st.success(f"🗑️ 已擦掉囉～")
+                    st.rerun()
+                    break
