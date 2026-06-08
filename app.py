@@ -126,7 +126,7 @@ header_html = """
 """
 st.markdown(header_html, unsafe_allow_html=True)
 
-# 功能選單 (加上 key 控制狀態)
+# 功能選單
 mode = st.radio(
     "🧭 請選取手帳功能：",
     ["🌸 打开手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"],
@@ -134,7 +134,7 @@ mode = st.radio(
     horizontal=True
 )
 
-# 功能 1：查看與搜尋
+# 功能 1：查看與搜尋 (全面改用安全字串拼接，杜絕語法錯誤)
 if mode == "🌸 打开手帳庫 (看番紀錄)":
     st.header("🔍 翻閱我的動漫手帳庫")
     search_keyword = st.text_input("🔮 輸入關鍵字搜搜看：", placeholder="搜尋名稱、標籤...")
@@ -143,11 +143,42 @@ if mode == "🌸 打开手帳庫 (看番紀錄)":
         for index, anime in enumerate(anime_list):
             if not search_keyword or search_keyword in anime[0] or search_keyword in anime[3]:
                 stars = "⭐" * anime[6]
-                card_html = f"""
+                card_html = """
                 <div class="anime-card">
                     <div class="anime-title">
-                        🎬 {anime[0]} 
-                        <span style="font-size: 0.95rem; float: right; color: #FF8A9A;">{anime[1]} · {stars}</span>
+                        🎬 """ + str(anime[0]) + """ 
+                        <span style="font-size: 0.95rem; float: right; color: #FF8A9A;">""" + str(anime[1]) + " · " + stars + """</span>
                     </div>
-                    <div style="margin-top: 8px; color: #6D4C41;"><b>✍️ 創作者：</b> {anime[2]}</div>
-                    <div style="color: #6
+                    <div style="margin-top: 8px; color: #6D4C41;"><b>✍️ 創作者：</b> """ + str(anime[2]) + """</div>
+                    <div style="color: #6D4C41;"><b>🏷️ 分類標籤：</b> """ + str(anime[3]) + """</div>
+                    <div style="color: #6D4C41;"><b>💌 心得點滴：</b> """ + str(anime[5]) + """</div>
+                </div>
+                """
+                st.markdown(card_html, unsafe_allow_html=True)
+    else:
+        st.info("🎈 存檔空間目前空空的，快去點上面的「➕ 填寫新紀錄」吧！")
+
+# 功能 2：填寫新紀錄
+elif mode == "➕ 填寫新紀錄 (捕捉感動)":
+    st.header("✨ 寫入新紀錄")
+    col1, col2 = st.columns(2)
+    with col1:
+        anime_name = st.text_input("🍒 作品名稱")
+        anime_author = st.text_input("✍️ 厲害的作者")
+    with col2:
+        anime_status = st.selectbox("🎯 目前進度", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
+        anime_type = st.text_input("🏷️ 類型標籤")
+        
+    anime_review = st.text_area("📝 心得悄悄話")
+    anime_score = st.slider("⭐ 推薦指數", 1, 5, 5)
+    
+    if st.button("💝 寫入晶片存檔", type="primary"):
+        if anime_name:
+            anime_list.append([anime_name, anime_status, anime_author, anime_type, [], anime_review, anime_score])
+            save_data()
+            st.success(f"🌟 成功寫入存檔！✅ 「{anime_name}」已存入晶片。")
+            st.session_state.nav_radio = "🌸 打开手帳庫 (看番紀錄)"
+            st.rerun()
+
+# 功能 3：悄悄修改資料
+elif mode == "📝 悄悄
