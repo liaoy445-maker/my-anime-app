@@ -5,7 +5,7 @@ import os
 # 設定網頁標題
 st.set_page_config(page_title="🌸 我的動漫像素手帳 🌸", layout="centered")
 
-# 💖 CSS 控制中心：純粹美化介面，不搞複雜的切片，100% 安全
+# 💖 CSS 魔法控制中心：讓 9 個獨立的小圖片動起來！
 st.markdown(
     """
     <style>
@@ -39,7 +39,20 @@ st.markdown(
         box-shadow: 5px 5px 0px #FFC1CC !important;
     }
 
-    /* 5. 介面元件可愛圓角化 */
+    /* 5. 核心：定義上下彈跳動畫 */
+    @keyframes pixelJump {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-8px); } /* 向上跳 8 像素 */
+        100% { transform: translateY(0); }
+    }
+
+    /* 6. 讓包裝圖片的容器套用動畫 */
+    .jump-container {
+        display: inline-block;
+        animation: pixelJump 0.6s infinite ease-in-out;
+    }
+
+    /* 7. 介面元件可愛圓角化 */
     .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {
         background-color: #FFFFFF !important;
         color: #5D4037 !important;
@@ -56,7 +69,7 @@ st.markdown(
         font-weight: bold !important;
     }
 
-    /* 6. 精美手帳字卡 */
+    /* 8. 精美手帳字卡 */
     .anime-card {
         background-color: #FFFFFF !important;
         border: 3px solid #5D4037 !important;
@@ -70,7 +83,7 @@ st.markdown(
         font-weight: bold !important;
         color: #5D4037 !important;
         border-bottom: 2px dashed #FFC1CC !important;
-        padding-bottom: 6px Img !important;
+        padding-bottom: 6px !important;
     }
     </style>
     """,
@@ -97,24 +110,62 @@ def save_data():
 st.markdown(
     """
     <div class="header-box">
-        <div style="font-size: 22px; font-weight: bold; color: #5D4037; letter-spacing: 2px; margin-bottom: 10px;">
+        <div style="font-size: 22px; font-weight: bold; color: #5D4037; letter-spacing: 2px; margin-bottom: 15px;">
             👾 ANIME PIXEL DIARY 👾
         </div>
     """,
     unsafe_allow_html=True
 )
 
-# 🎯 【超級大復活】直接用 Streamlit 原生語法，把主人上傳的圖片整張完整且漂漂亮亮地秀在最上面！
-# 這樣一來，九個角色全家福都能完美看見，而且因為是原生讀取，百分之百保證能顯色！
-try:
-    st.image("IMG_0417.jpeg", caption="✨ 主人的英雄學院像素秘密基地 ✨", use_container_width=True)
-except:
-    try:
-        st.image("heroes.png", caption="✨ 主人的英雄學院像素秘密基地 ✨", use_container_width=True)
-    except:
-        st.write("🌸 正在同步 GitHub 動漫晶片中...")
+# 🎯 準備 9 張去背小圖的穩定分流網址
+heroes = {
+    "ochaco": "https://i.imgur.com/vH97Oco.png",     # 御茶子
+    "deku": "https://i.imgur.com/f0m76s9.png",       # 出久
+    "bakugo": "https://i.imgur.com/kSPhsQY.png",     # 爆豪
+    "iida": "https://i.imgur.com/KofW8tT.png",       # 飯田
+    "todoroki": "https://i.imgur.com/w90Lg2q.png",   # 轟
+    "kirishima": "https://i.imgur.com/3Z6H9kX.png",  # 切島
+    "tokoyami": "https://i.imgur.com/C30w5G3.png",   # 常闇
+    "tsuyu": "https://i.imgur.com/R8pP6rC.png",      # 梅雨
+    "denki": "https://i.imgur.com/V7w7fT6.png"       # 上鳴
+}
 
-st.markdown("</div>", unsafe_allow_html=True)
+# 🌟 使用 Streamlit 的欄位功能（Columns）排成美美的九宮格
+# 第一排：4 個人
+st.markdown('<div style="margin-bottom: 10px;">', unsafe_allow_html=True)
+c1, c2, c3, c4 = st.columns(4)
+with c1:
+    st.markdown(f'<div class="jump-container" style="animation-delay: 0.0s;"><img src="{heroes["ochaco"]}" width="65"></div>', unsafe_allow_html=True)
+with c2:
+    st.markdown(f'<div class="jump-container" style="animation-delay: 0.1s;"><img src="{heroes["deku"]}" width="65"></div>', unsafe_allow_html=True)
+with c3:
+    st.markdown(f'<div class="jump-container" style="animation-delay: 0.2s;"><img src="{heroes["bakugo"]}" width="65"></div>', unsafe_allow_html=True)
+with c4:
+    st.markdown(f'<div class="jump-container" style="animation-delay: 0.15s;"><img src="{heroes["iida"]}" width="65"></div>', unsafe_allow_html=True)
+
+# 第二排：5 個人
+st.markdown('<div style="margin-top: 15px; margin-bottom: 15px;">', unsafe_allow_html=True)
+c5, c6, c7, c8, c9 = st.columns(5)
+with c5:
+    st.markdown(f'<div class="jump-container" style="animation-delay: 0.25s;"><img src="{heroes["todoroki"]}" width="55"></div>', unsafe_allow_html=True)
+with c6:
+    st.markdown(f'<div class="jump-container" style="animation-delay: 0.05s;"><img src="{heroes["kirishima"]}" width="55"></div>', unsafe_allow_html=True)
+with c7:
+    st.markdown(f'<div class="jump-container" style="animation-delay: 0.3s;"><img src="{heroes["tokoyami"]}" width="55"></div>', unsafe_allow_html=True)
+with c8:
+    st.markdown(f'<div class="jump-container" style="animation-delay: 0.2s;"><img src="{heroes["tsuyu"]}" width="55"></div>', unsafe_allow_html=True)
+with c9:
+    st.markdown(f'<div class="jump-container" style="animation-delay: 0.12s;"><img src="{heroes["denki"]}" width="55"></div>', unsafe_allow_html=True)
+
+st.markdown(
+    """
+        <div style="font-size: 13px; color: #8D6E63; margin-top: 20px;">
+            ✨ 主人的英雄學院像素秘密基地 · 點陣角色熱血跳動中 ✨
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # 功能選單
 mode = st.radio(
@@ -147,7 +198,7 @@ if mode == "🌸 打开手帳庫 (看番紀錄)":
     else:
         st.info("🎈 存檔空間目前空空的，快去點上面的「➕ 填寫新紀錄」吧！")
 
-# 填寫新紀錄
+# 功能 2：填寫新紀錄
 elif mode == "➕ 填寫新紀錄 (捕捉感動)":
     st.header("✨ 寫入新紀錄")
     col1, col2 = st.columns(2)
@@ -156,46 +207,4 @@ elif mode == "➕ 填寫新紀錄 (捕捉感動)":
         anime_author = st.text_input("✍️ 厲害的作者")
     with col2:
         anime_status = st.selectbox("🎯 目前進度", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
-        anime_type = st.text_input("🏷️ 類型標籤")
-        
-    anime_review = st.text_area("📝 心得悄悄話")
-    anime_score = st.slider("⭐ 推薦指數", 1, 5, 5)
-    
-    if st.button("💝 寫入晶片存檔", type="primary"):
-        if anime_name:
-            anime_list.append([anime_name, anime_status, anime_author, anime_type, [], anime_review, anime_score])
-            save_data()
-            st.success("🌟 成功寫入存檔！")
-            st.rerun()
-
-# 悄悄修改資料
-elif mode == "📝 悄悄修改資料 (補上心情)":
-    st.header("📝 悄悄修改資料")
-    if anime_list:
-        anime_names = [anime[0] for anime in anime_list]
-        selected_name = st.selectbox("請選擇哪一部作品想翻修呢：", anime_names)
-        for anime in anime_list:
-            if anime[0] == selected_name:
-                new_status = st.selectbox("新的追番狀態", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
-                new_review = st.text_area("更新心得點滴", value=anime[5])
-                if st.button("💝 儲存新心情"):
-                    anime[1] = new_status
-                    anime[5] = new_review
-                    save_data()
-                    st.success("✨ 手帳更新成功！")
-                    st.rerun()
-
-# 揮揮手道別
-elif mode == "🗑️ 揮揮手道別 (刪除紀錄)":
-    st.header("🗑️ 揮揮手道別")
-    if anime_list:
-        anime_names = [anime[0] for anime in anime_list]
-        target_name = st.selectbox("選一個要揮揮手說再見的作品：", anime_names)
-        if st.button("💥 確定斷捨離！", type="primary"):
-            for anime in anime_list:
-                if anime[0] == target_name:
-                    anime_list.remove(anime)
-                    save_data()
-                    st.success(f"🗑️ 已擦掉囉～")
-                    st.rerun()
-                    break
+        anime_type = st.text
