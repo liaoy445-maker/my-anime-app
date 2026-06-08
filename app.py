@@ -11,7 +11,7 @@ BANNER_TITLE = "👾 ANIME DIARY 👾"
 # 設定網頁標題
 st.set_page_config(page_title="🌸 我的動漫像素手帳 🌸", layout="centered")
 
-# 💖 CSS 美化控制中心 (經檢查：文字字串完全閉合，安全無誤)
+# 💖 CSS 美化控制中心 (百分之百純 CSS 宣告，絕無變數衝突)
 st.markdown(
     """
     <style>
@@ -54,7 +54,6 @@ st.markdown(
         letter-spacing: 2px !important;
         margin-bottom: 8px !important;
         white-space: nowrap !important;
-        block-size: auto;
     }
 
     .sub-title {
@@ -82,20 +81,13 @@ st.markdown(
     }
 
     /* 6. 精美手帳字卡 */
-    .anime-card {
+    .custom-card {
         background-color: #FFFFFF !important;
         border: 3px solid #5D4037 !important;
         border-radius: 12px !important;
-        padding: 15px !important;
+        padding: 20px !important;
         margin-bottom: 20px !important;
         box-shadow: 5px 5px 0px #FFC1CC !important;
-    }
-    .anime-title {
-        font-size: 1.25rem !important;
-        font-weight: bold !important;
-        color: #5D4037 !important;
-        border-bottom: 2px dashed #FFC1CC !important;
-        padding-bottom: 6px !important;
     }
     </style>
     """,
@@ -119,23 +111,12 @@ def save_data():
         json.dump(anime_list, f, ensure_ascii=False, indent=4)
 
 # --- 💖 頂部招牌看板 💖 ---
-header_html = """
-<div class="header-box">
-    <div class="main-title">""" + BANNER_TITLE + """</div>
-    <div class="sub-title">✨ 動漫秘密基地 · 紀錄追番的每刻感動 ✨</div>
-</div>
-"""
-st.markdown(header_html, unsafe_allow_html=True)
+st.markdown('<div class="header-box"><div class="main-title">' + BANNER_TITLE + '</div><div class="sub-title">✨ 動漫秘密基地 · 紀錄追番的每刻感動 ✨</div></div>', unsafe_allow_html=True)
 
-# 功能選單 (加上 key 控制狀態)
-mode = st.radio(
-    "🧭 請選取手帳功能：",
-    ["🌸 打开手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"],
-    key="nav_radio",
-    horizontal=True
-)
+# 功能選單
+mode = st.radio("🧭 請選取手帳功能：", ["🌸 打开手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"], key="nav_radio", horizontal=True)
 
-# 功能 1：查看與搜尋 (安全字串拼接，絕無衝突)
+# 功能 1：查看與搜尋
 if mode == "🌸 打开手帳庫 (看番紀錄)":
     st.header("🔍 翻閱我的動漫手帳庫")
     search_keyword = st.text_input("🔮 輸入關鍵字搜搜看：", placeholder="搜尋名稱、標籤...")
@@ -144,18 +125,14 @@ if mode == "🌸 打开手帳庫 (看番紀錄)":
         for index, anime in enumerate(anime_list):
             if not search_keyword or search_keyword in anime[0] or search_keyword in anime[3]:
                 stars = "⭐" * anime[6]
-                card_html = """
-                <div class="anime-card">
-                    <div class="anime-title">
-                        🎬 """ + str(anime[0]) + """ 
-                        <span style="font-size: 0.95rem; float: right; color: #FF8A9A;">""" + str(anime[1]) + " · " + stars + """</span>
-                    </div>
-                    <div style="margin-top: 8px; color: #6D4C41;"><b>✍️ 創作者：</b> """ + str(anime[2]) + """</div>
-                    <div style="color: #6D4C41;"><b>🏷️ 分類標籤：</b> """ + str(anime[3]) + """</div>
-                    <div style="color: #6D4C41;"><b>💌 心得點滴：</b> """ + str(anime[5]) + """</div>
-                </div>
-                """
-                st.markdown(card_html, unsafe_allow_html=True)
+                # 🎯 放棄 HTML 字串，改用內嵌網頁結構 + 原生 Streamlit 元件，絕對不可能報錯！
+                st.markdown('<div class="custom-card">', unsafe_allow_html=True)
+                st.subheader(f"🎬 {anime[0]}")
+                st.write(f"🎯 **進度狀態：** {anime[1]} ｜ {stars}")
+                st.write(f"✍️ **創作者：** {anime[2]}")
+                st.write(f"🏷️ **分類標籤：** {anime[3]}")
+                st.write(f"💌 **心得點滴：** {anime[5]}")
+                st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info("🎈 存檔空間目前空空的，快去點上面的「➕ 填寫新紀錄」吧！")
 
@@ -167,4 +144,54 @@ elif mode == "➕ 填寫新紀錄 (捕捉感動)":
         anime_name = st.text_input("🍒 作品名稱")
         anime_author = st.text_input("✍️ 厲害的作者")
     with col2:
-        anime_status = st.selectbox("🎯 目前進
+        anime_status = st.selectbox("🎯 目前進度", ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"])
+        anime_type = st.text_input("🏷️ 類型標籤")
+        
+    anime_review = st.text_area("📝 心得悄悄話")
+    anime_score = st.slider("⭐ 推薦指數", 1, 5, 5)
+    
+    if st.button("💝 寫入晶片存檔", type="primary"):
+        if anime_name:
+            anime_list.append([anime_name, anime_status, anime_author, anime_type, [], anime_review, anime_score])
+            save_data()
+            st.success(f"🌟 成功寫入存檔！✅ 「{anime_name}」已存入晶片。")
+            st.session_state.nav_radio = "🌸 打开手帳庫 (看番紀錄)"
+            st.rerun()
+
+# 功能 3：悄悄修改資料
+elif mode == "📝 悄悄修改資料 (補上心情)":
+    st.header("📝 悄悄修改資料")
+    if anime_list:
+        anime_names = [anime[0] for anime in anime_list]
+        selected_name = st.selectbox("請選擇哪一部作品想翻修呢：", anime_names)
+        for anime in anime_list:
+            if anime[0] == selected_name:
+                status_options = ["🌟 想看很久了", "🔥 正在熱血追番", "🎉 已經完美看完", "💤 稍微休息停看"]
+                current_index = status_options.index(anime[1]) if anime[1] in status_options else 0
+                new_status = st.selectbox("新的追番狀態", status_options, index=current_index)
+                new_review = st.text_area("更新心得點滴", value=anime[5])
+                
+                if st.button("💝 儲存新心情"):
+                    anime[1] = new_status
+                    anime[5] = new_review
+                    save_data()
+                    st.success(f"✨ 手帳更新成功！✅ 「{selected_name}」的心情已存入。")
+                    st.session_state.nav_radio = "🌸 打开手帳庫 (看番紀錄)"
+                    st.rerun()
+
+# 功能 4：揮揮手道別
+elif mode == "🗑️ 揮揮手道別 (刪除紀錄)":
+    st.header("🗑️ 揮揮手道別")
+    if anime_list:
+        anime_names = [anime[0] for anime in anime_list]
+        target_name = st.selectbox("選一個要揮揮手說再見的作品：", anime_names)
+        
+        if st.button("💥 確定斷捨離！", type="primary", key="delete_confirm"):
+            for anime in anime_list:
+                if anime[0] == target_name:
+                    anime_list.remove(anime)
+                    save_data()
+                    st.warning(f"🗑️ 已擦掉囉～ ✅ 「{target_name}」已從存檔移出。")
+                    st.session_state.nav_radio = "🌸 打开手帳庫 (看番紀錄)"
+                    st.rerun()
+                    break
