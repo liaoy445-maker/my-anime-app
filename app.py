@@ -11,7 +11,7 @@ BANNER_TITLE = "👾 ANIME DIARY 👾"
 # 設定網頁標題
 st.set_page_config(page_title="🌸 我的動漫像素手帳 🌸", layout="centered")
 
-# 💖 CSS 美化控制中心 (百分之百純 CSS 宣告，絕無變數衝突)
+# 💖 CSS 美化控制中心 (移除了所有會跟元件衝突的 card 標籤)
 st.markdown(
     """
     <style>
@@ -79,16 +79,6 @@ st.markdown(
         box-shadow: 3px 3px 0px #5D4037 !important;
         font-weight: bold !important;
     }
-
-    /* 6. 精美手帳字卡 */
-    .custom-card {
-        background-color: #FFFFFF !important;
-        border: 3px solid #5D4037 !important;
-        border-radius: 12px !important;
-        padding: 20px !important;
-        margin-bottom: 20px !important;
-        box-shadow: 5px 5px 0px #FFC1CC !important;
-    }
     </style>
     """,
     unsafe_allow_html=True
@@ -113,26 +103,41 @@ def save_data():
 # --- 💖 頂部招牌看板 💖 ---
 st.markdown('<div class="header-box"><div class="main-title">' + BANNER_TITLE + '</div><div class="sub-title">✨ 動漫秘密基地 · 紀錄追番的每刻感動 ✨</div></div>', unsafe_allow_html=True)
 
+# 🎯 初始化頁面索引 (用最安全的方式控制選單跳轉)
+if "current_page_idx" not in st.session_state:
+    st.session_state.current_page_idx = 0
+
+menu_options = ["🌸 打开手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"]
+
 # 功能選單
-mode = st.radio("🧭 請選取手帳功能：", ["🌸 打开手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"], key="nav_radio", horizontal=True)
+mode = st.radio(
+    "🧭 請選取手帳功能：", 
+    menu_options, 
+    index=st.session_state.current_page_idx, 
+    horizontal=True
+)
+
+# 同步選單索引
+st.session_state.current_page_idx = menu_options.index(mode)
 
 # 功能 1：查看與搜尋
 if mode == "🌸 打开手帳庫 (看番紀錄)":
     st.header("🔍 翻閱我的動漫手帳庫")
-    search_keyword = st.text_input("🔮 輸入關鍵字搜搜看：", placeholder="搜尋名稱、標籤...")
+    search_keyword = st.text_input("🔮 輸入關鍵字搜搜看：", placeholder="搜尋名稱、標籤...", key="real_search_input")
     
     if anime_list:
         for index, anime in enumerate(anime_list):
             if not search_keyword or search_keyword in anime[0] or search_keyword in anime[3]:
                 stars = "⭐" * anime[6]
-                # 🎯 放棄 HTML 字串，改用內嵌網頁結構 + 原生 Streamlit 元件，絕對不可能報錯！
-                st.markdown('<div class="custom-card">', unsafe_allow_html=True)
+                
+                # 改用 Streamlit 原生的分行樣式，完美解決雙輸入框與排版錯亂
+                st.write("---")
                 st.subheader(f"🎬 {anime[0]}")
                 st.write(f"🎯 **進度狀態：** {anime[1]} ｜ {stars}")
                 st.write(f"✍️ **創作者：** {anime[2]}")
                 st.write(f"🏷️ **分類標籤：** {anime[3]}")
                 st.write(f"💌 **心得點滴：** {anime[5]}")
-                st.markdown('</div>', unsafe_allow_html=True)
+        st.write("---")
     else:
         st.info("🎈 存檔空間目前空空的，快去點上面的「➕ 填寫新紀錄」吧！")
 
@@ -155,7 +160,7 @@ elif mode == "➕ 填寫新紀錄 (捕捉感動)":
             anime_list.append([anime_name, anime_status, anime_author, anime_type, [], anime_review, anime_score])
             save_data()
             st.success(f"🌟 成功寫入存檔！✅ 「{anime_name}」已存入晶片。")
-            st.session_state.nav_radio = "🌸 打开手帳庫 (看番紀錄)"
+            st.session_state.current_page_idx = 0  # 安全設定回第一頁
             st.rerun()
 
 # 功能 3：悄悄修改資料
@@ -176,7 +181,7 @@ elif mode == "📝 悄悄修改資料 (補上心情)":
                     anime[5] = new_review
                     save_data()
                     st.success(f"✨ 手帳更新成功！✅ 「{selected_name}」的心情已存入。")
-                    st.session_state.nav_radio = "🌸 打开手帳庫 (看番紀錄)"
+                    st.session_state.current_page_idx = 0  # 安全設定回第一頁
                     st.rerun()
 
 # 功能 4：揮揮手道別
@@ -192,6 +197,6 @@ elif mode == "🗑️ 揮揮手道別 (刪除紀錄)":
                     anime_list.remove(anime)
                     save_data()
                     st.warning(f"🗑️ 已擦掉囉～ ✅ 「{target_name}」已從存檔移出。")
-                    st.session_state.nav_radio = "🌸 打开手帳庫 (看番紀錄)"
+                    st.session_state.current_page_idx = 0  # 安全設定回第一頁
                     st.rerun()
                     break
