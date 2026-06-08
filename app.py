@@ -91,18 +91,4 @@ anime_list = st.session_state.anime_list
 
 def save_data():
     with open(FILE_NAME, "w", encoding="utf-8") as f:
-        json.dump(anime_list, f, ensure_ascii=False, indent=4)
-
-# --- 💖 頂部招牌看板 (已撤掉所有圖片程式碼) 💖 ---
-st.markdown(
-    """
-    <div class="header-box">
-        <div style="font-size: 26px; font-weight: bold; color: #5D4037; letter-spacing: 2px; margin-bottom: 5px;">
-            👾 ANIME PIXEL DIARY 👾
-        </div>
-        <div style="font-size: 14px; color: #8D6E63;">
-            ✨ 主人的動漫秘密基地 · 紀錄追番的每一刻感動 ✨
-        </div>
-    </div>
-    """,
-    unsafe_allow_html
+        json.dump(anime_list
