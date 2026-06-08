@@ -129,12 +129,12 @@ st.markdown(header_html, unsafe_allow_html=True)
 # 功能選單
 mode = st.radio(
     "🧭 請選取手帳功能：",
-    ["🌸 打开手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"],
+    ["🌸 打開手帳庫 (看番紀錄)", "➕ 填寫新紀錄 (捕捉感動)", "📝 悄悄修改資料 (補上心情)", "🗑️ 揮揮手道別 (刪除紀錄)"],
     horizontal=True
 )
 
 # 功能 1：查看與搜尋
-if mode == "🌸 打开手帳庫 (看番紀錄)":
+if mode == "🌸 打開手帳庫 (看番紀錄)":
     st.header("🔍 翻閱我的動漫手帳庫")
     search_keyword = st.text_input("🔮 輸入關鍵字搜搜看：", placeholder="搜尋名稱、標籤...")
     
